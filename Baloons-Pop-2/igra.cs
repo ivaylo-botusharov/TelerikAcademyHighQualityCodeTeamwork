@@ -16,8 +16,6 @@ namespace BalloonsPops
 		private static int userMoves = 0;
 		private static int clearedCells = 0;
 
-
-
 		public static string[,] _t = new string[shirina, length];
 		public static StringBuilder userInput = new StringBuilder();
 		private static SortedDictionary<int, string> statistics = new SortedDictionary<int, string>();
