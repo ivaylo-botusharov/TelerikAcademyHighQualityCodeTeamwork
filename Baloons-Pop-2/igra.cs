@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-//niamam obfuskator i zatova sym cepil na ryka, kojto mu se padne, da ne me tyrsi, zaminavam v cuzbina v kurmandirovka
 namespace BalloonsPops
 {
 	public class igra
