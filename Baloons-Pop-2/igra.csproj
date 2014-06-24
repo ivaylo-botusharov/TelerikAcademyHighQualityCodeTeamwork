@@ -43,9 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="igra.cs">
+    <Compile Include="Game.cs">
       <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
     </Compile>
+    <Compile Include="Playfield.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="RandomGenerator.cs" />
   </ItemGroup>

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace BalloonsPops
+﻿namespace BalloonsPops
 {
+    using System;
+
 	public static class RandomGenerator
 	{
+		private static Random r = new Random();
 
-		static Random r = new Random();
 		public static string GetRandomInt()
 		{
 			string legalChars = "1234";

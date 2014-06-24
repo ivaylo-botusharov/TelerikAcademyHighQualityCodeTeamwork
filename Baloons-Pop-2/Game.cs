@@ -1,47 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-
 namespace BalloonsPops
 {
-    public class igra
-    {
-        public const int width = 5;
-        public const int length = 10;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading;
 
-        public static string[,] field = new string[width, length];
+    public class Game
+    {
+        //public const int width = 5;
+        //public const int length = 10;
+
+        //public static string[,] field = new string[width, length];
+        private static Playfield playfield;
+
         public static StringBuilder userInput = new StringBuilder();
 
-        private static int balloonsLeft = width * length;
+        private static int balloonsLeft;
         private static int userMoves = 0;
         private static int clearedCells = 0;
         private static SortedDictionary<int, string> statistics = new SortedDictionary<int, string>();
 
+
         //Initialize
-        public static void CreateTable()
-        {
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < length; j++)
-                {
-                    field[i, j] = RandomGenerator.GetRandomInt();
-                }
-            }
-        }
+        //public static void CreateTable()
+        //{
+        //    for (int i = 0; i < width; i++)
+        //    {
+        //        for (int j = 0; j < length; j++)
+        //        {
+        //            field[i, j] = RandomGenerator.GetRandomInt();
+        //        }
+        //    }
+        //}
 
 
         //Environment setup
         public static void Start()
         {
             Console.WriteLine("Welcome to “Balloons Pops” game. Please try to pop the balloons. Use 'top' to view the top scoreboard, 'restart' to start a new game and 'exit' to quit the game.");
-            
-            balloonsLeft = width * length;
+
+            playfield = new Playfield();
+
+            balloonsLeft = playfield.Width * playfield.Height;
             userMoves = 0;
             clearedCells = 0;
 
-            CreateTable();
+            //CreateTable();
             PrintTable();
             GameLogic(userInput);
         }
@@ -112,7 +117,7 @@ namespace BalloonsPops
 
             if (IsLegalMove(i, j))
             {
-                activeCell = field[i, j];
+                activeCell = playfield.Field[i, j];
                 RemoveAllBaloons(i, j, activeCell);
             }
             else
@@ -160,9 +165,9 @@ namespace BalloonsPops
         //Update
         private static void RemoveAllBaloons(int i, int j, string activeCell)
         {
-            if ((i >= 0) && (i <= 4) && (j <= 9) && (j >= 0) && (field[i, j] == activeCell))
+            if ((i >= 0) && (i <= 4) && (j <= 9) && (j >= 0) && (playfield.Field[i, j] == activeCell))
             {
-                field[i, j] = ".";
+                playfield.Field[i, j] = ".";
                 clearedCells++;
 
                 //Up
@@ -193,14 +198,14 @@ namespace BalloonsPops
 
             Queue<string> temp = new Queue<string>();
 
-            for (j = length - 1; j >= 0; j--)
+            for (j = playfield.Height - 1; j >= 0; j--)
             {
-                for (i = width - 1; i >= 0; i--)
+                for (i = playfield.Width - 1; i >= 0; i--)
                 {
-                    if (field[i, j] != ".")
+                    if (playfield.Field[i, j] != ".")
                     {
-                        temp.Enqueue(field[i, j]);
-                        field[i, j] = ".";
+                        temp.Enqueue(playfield.Field[i, j]);
+                        playfield.Field[i, j] = ".";
                     }
                 }
 
@@ -208,7 +213,7 @@ namespace BalloonsPops
 
                 while (temp.Count > 0)
                 {
-                    field[i, j] = temp.Dequeue();
+                    playfield.Field[i, j] = temp.Dequeue();
                     i--;
                 }
 
@@ -220,13 +225,13 @@ namespace BalloonsPops
         //Checkers
         private static bool IsLegalMove(int i, int j)
         {
-            if ((i < 0) || (j < 0) || (j > length - 1) || (i > width - 1))
+            if ((i < 0) || (j < 0) || (j > playfield.Height - 1) || (i > playfield.Width - 1))
             {
                 return false;
             }
             else
             {
-                return (field[i, j] != ".");
+                return (playfield.Field[i, j] != ".");
             }
         }
 
@@ -242,13 +247,13 @@ namespace BalloonsPops
             Console.WriteLine("    0 1 2 3 4 5 6 7 8 9");
             Console.WriteLine("   ---------------------");
 
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < playfield.Width; i++)
             {
                 Console.Write(i + " | ");
 
-                for (int j = 0; j < length; j++)
+                for (int j = 0; j < playfield.Height; j++)
                 {
-                    Console.Write(field[i, j] + " ");
+                    Console.Write(playfield.Field[i, j] + " ");
                 }
 
                 Console.Write("| ");
