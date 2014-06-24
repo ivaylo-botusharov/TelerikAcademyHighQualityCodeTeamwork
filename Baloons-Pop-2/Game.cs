@@ -14,11 +14,11 @@ namespace BalloonsPops
         //public static string[,] field = new string[width, length];
         private static Playfield playfield;
 
-        public static StringBuilder userInput = new StringBuilder();
+        //private static StringBuilder userInput;
 
         private static int balloonsLeft;
-        private static int userMoves = 0;
-        private static int clearedCells = 0;
+        private static int userMoves;
+        private static int clearedCells;
         private static SortedDictionary<int, string> statistics = new SortedDictionary<int, string>();
 
 
@@ -34,21 +34,27 @@ namespace BalloonsPops
         //    }
         //}
 
-
-        //Environment setup
-        public static void Start()
+        private static void InitializeGameSettings()
         {
-            Console.WriteLine("Welcome to “Balloons Pops” game. Please try to pop the balloons. Use 'top' to view the top scoreboard, 'restart' to start a new game and 'exit' to quit the game.");
-
+            //userInput = new StringBuilder();
             playfield = new Playfield();
 
             balloonsLeft = playfield.Width * playfield.Height;
             userMoves = 0;
             clearedCells = 0;
+        }
+
+
+        //Environment setup
+
+        public static void Start()
+        {
+            Console.WriteLine("Welcome to “Balloons Pops” game. Please try to pop the balloons. Use 'top' to view the top scoreboard, 'restart' to start a new game and 'exit' to quit the game.");
 
             //CreateTable();
+            InitializeGameSettings();
             PrintTable();
-            GameLogic(userInput);
+            GameLogic();
         }
 
         private static void Restart()
@@ -70,55 +76,53 @@ namespace BalloonsPops
 
         private static void PlayGame()
         {
-            int i = -1;
-            int j = -1;
+            int currentRow = -1;
+            int currentCol = -1;
 
-            Play:
-            ReadTheIput();
+        //Play:
+        //    ReadInput();
 
-            string hop = userInput.ToString();
+            string currentInput = ReadInput();
 
-            if (userInput.ToString() == "")
+            if (currentInput == "")
             {
                 InvalidInput();
             }
 
-            if (userInput.ToString() == "top")
+            if (currentInput == "top")
             {
                 ShowStatistics();
-                userInput.Clear();
-                goto Play;
+                //goto Play;
             }
 
-            if (userInput.ToString() == "restart")
+            if (currentInput == "restart")
             {
-                userInput.Clear();
                 Restart();
             }
 
-            if (userInput.ToString() == "exit")
+            if (currentInput == "exit")
             {
                 Exit();
             }
 
             string activeCell;
 
-            userInput.Replace(" ", "");
+            var splittedUserInput = currentInput.Split(' ');
 
             try
             {
-                i = Int32.Parse(userInput.ToString()) / 10;
-                j = Int32.Parse(userInput.ToString()) % 10;
+                currentRow = Int32.Parse(splittedUserInput[0]);
+                currentCol = Int32.Parse(splittedUserInput[1]);
             }
             catch (Exception)
             {
                 InvalidInput();
             }
 
-            if (IsLegalMove(i, j))
+            if (IsLegalMove(currentRow, currentCol))
             {
-                activeCell = playfield.Field[i, j];
-                RemoveAllBaloons(i, j, activeCell);
+                activeCell = playfield.Field[currentRow, currentCol];
+                RemoveAllBaloons(currentRow, currentCol, activeCell);
             }
             else
             {
@@ -131,34 +135,40 @@ namespace BalloonsPops
 
 
         //Main magic
-        private static void ReadTheIput()
+        private static string ReadInput()
         {
+            string userInput = string.Empty;
             if (!IsFinished())
             {
                 Console.Write("Enter a row and column: ");
-                
-                userInput.Append(Console.ReadLine());
+                userInput = Console.ReadLine();
+
+                return userInput;
             }
             else
             {
                 Console.Write("opal;aaaaaaaa! You popped all baloons in " + userMoves + " moves." +
                               "Please enter your name for the top scoreboard:");
 
-                userInput.Append(Console.ReadLine());
-                statistics.Add(userMoves, userInput.ToString());
+                statistics.Add(userMoves, userInput);
                 PrintTheScoreBoard();
-                userInput.Clear();
                 Start();
             }
+
+            return userInput;
         }
 
-        public static void GameLogic(StringBuilder userInput)
+        private static void ProcessInput()
+        {
+        }
+
+        public static void GameLogic()
         {
             userMoves++;
 
             PlayGame();
-            userInput.Clear();
-            GameLogic(userInput);
+            //userInput.Clear();
+            GameLogic();
         }
 
 
@@ -295,16 +305,14 @@ namespace BalloonsPops
         {
             Console.WriteLine("Invalid move or command");
 
-            userInput.Clear();
-            GameLogic(userInput);
+            GameLogic();
         }
 
         private static void InvalidMove()
         {
             Console.WriteLine("Illegal move: cannot pop missing ballon!");
 
-            userInput.Clear();
-            GameLogic(userInput);
+            GameLogic();
         }
     }
 }
