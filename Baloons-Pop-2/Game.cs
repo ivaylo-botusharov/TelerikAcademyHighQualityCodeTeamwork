@@ -2,9 +2,6 @@
 namespace BalloonsPops
 {
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading;
 
     public class Game
     {
@@ -49,11 +46,10 @@ namespace BalloonsPops
 
         public static void Start()
         {
-            Console.WriteLine("Welcome to “Balloons Pops” game. Please try to pop the balloons. Use 'top' to view the top scoreboard, 'restart' to start a new game and 'exit' to quit the game.");
-
+            ConsoleIOEngine.PrintWelcomeMessage();
             //CreateTable();
             InitializeGameSettings();
-            PrintTable();
+            ConsoleIOEngine.PrintTable(playfield);
             GameLogic();
         }
 
@@ -64,12 +60,7 @@ namespace BalloonsPops
 
         private static void Exit()
         {
-            Console.WriteLine("Good Bye");
-
-            Thread.Sleep(1000);
-
-            Console.WriteLine(userMoves.ToString());
-            Console.WriteLine(balloonsLeft.ToString());
+            ConsoleIOEngine.PrintExitMessage(userMoves, balloonsLeft);
 
             Environment.Exit(0);
         }
@@ -82,28 +73,17 @@ namespace BalloonsPops
         //Play:
         //    ReadInput();
 
-            string currentInput = ReadInput();
-
-            if (currentInput == "")
+            if (IsFinished())
             {
-                InvalidInput();
+                ConsoleIOEngine.PrintRegisterTopScoreMessage(userMoves);
+                statistics.Add(userMoves, string.Empty);
+                ConsoleIOEngine.PrintStatistics(statistics);
+                Start();
             }
 
-            if (currentInput == "top")
-            {
-                ShowStatistics();
-                //goto Play;
-            }
+            string currentInput = ConsoleIOEngine.ReadInput();
 
-            if (currentInput == "restart")
-            {
-                Restart();
-            }
-
-            if (currentInput == "exit")
-            {
-                Exit();
-            }
+            ProcessInput(currentInput);
 
             string activeCell;
 
@@ -116,7 +96,7 @@ namespace BalloonsPops
             }
             catch (Exception)
             {
-                InvalidInput();
+                ConsoleIOEngine.PrintInvalidInput();
             }
 
             if (IsLegalMove(currentRow, currentCol))
@@ -126,51 +106,46 @@ namespace BalloonsPops
             }
             else
             {
-                InvalidMove();
+                ConsoleIOEngine.PrintInvalidMove();
             }
 
             ClearEmptyCells();
-            PrintTable();
+            ConsoleIOEngine.PrintTable(playfield);
         }
 
 
         //Main magic
-        private static string ReadInput()
+
+        private static void ProcessInput(string input)
         {
-            string userInput = string.Empty;
-            if (!IsFinished())
+            switch (input)
             {
-                Console.Write("Enter a row and column: ");
-                userInput = Console.ReadLine();
-
-                return userInput;
+                case "top": 
+                    ConsoleIOEngine.PrintStatistics(statistics); 
+                    break;
+                case "restart":
+                    Restart();
+                    break;
+                case "exit":
+                    Exit();
+                    break;
+                case "": 
+                    ConsoleIOEngine.PrintInvalidInput();
+                    break;
+                default:
+                    break;
             }
-            else
-            {
-                Console.Write("opal;aaaaaaaa! You popped all baloons in " + userMoves + " moves." +
-                              "Please enter your name for the top scoreboard:");
-
-                statistics.Add(userMoves, userInput);
-                PrintTheScoreBoard();
-                Start();
-            }
-
-            return userInput;
-        }
-
-        private static void ProcessInput()
-        {
         }
 
         public static void GameLogic()
         {
-            userMoves++;
-
-            PlayGame();
-            //userInput.Clear();
-            GameLogic();
+            while (true)
+            {
+                userMoves++;
+                PlayGame();
+                //userInput.Clear();
+            }
         }
-
 
         //Update
         private static void RemoveAllBaloons(int i, int j, string activeCell)
@@ -231,7 +206,6 @@ namespace BalloonsPops
             }
         }
 
-
         //Checkers
         private static bool IsLegalMove(int i, int j)
         {
@@ -248,71 +222,6 @@ namespace BalloonsPops
         private static bool IsFinished()
         {
             return (balloonsLeft == 0);
-        }
-
-
-        //Renderer
-        public static void PrintTable()
-        {
-            Console.WriteLine("    0 1 2 3 4 5 6 7 8 9");
-            Console.WriteLine("   ---------------------");
-
-            for (int i = 0; i < playfield.Width; i++)
-            {
-                Console.Write(i + " | ");
-
-                for (int j = 0; j < playfield.Height; j++)
-                {
-                    Console.Write(playfield.Field[i, j] + " ");
-                }
-
-                Console.Write("| ");
-                Console.WriteLine();
-            }
-
-            Console.WriteLine("   ---------------------");
-        }
-
-        private static void ShowStatistics()
-        {
-            PrintTheScoreBoard();
-        }
-
-        private static void PrintTheScoreBoard()
-        {
-            int p = 0;
-
-            Console.WriteLine("Scoreboard:");
-
-            foreach (KeyValuePair<int, string> s in statistics)
-            {
-                if (p == 4)
-                {
-                    break;
-                }
-                else
-                {
-                    p++;
-                    Console.WriteLine("{0}. {1} --> {2} moves", p, s.Value, s.Key);
-                }
-            }
-        }
-
-
-        //Exception messages
-
-        private static void InvalidInput()
-        {
-            Console.WriteLine("Invalid move or command");
-
-            GameLogic();
-        }
-
-        private static void InvalidMove()
-        {
-            Console.WriteLine("Illegal move: cannot pop missing ballon!");
-
-            GameLogic();
         }
     }
 }
