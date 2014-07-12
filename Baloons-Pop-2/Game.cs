@@ -9,14 +9,14 @@ namespace BalloonsPops
         //public const int length = 10;
 
         //public static string[,] field = new string[width, length];
-        private static Playfield playfield;
+        private Playfield playfield;
 
         //private static StringBuilder userInput;
 
-        private static int balloonsLeft;
-        private static int userMoves;
-        private static int clearedCells;
-        private static SortedDictionary<int, string> statistics = new SortedDictionary<int, string>();
+        private int balloonsLeft;
+        private int userMoves;
+        private int clearedCells;
+        private SortedDictionary<int, string> statistics = new SortedDictionary<int, string>();
 
 
         //Initialize
@@ -31,41 +31,41 @@ namespace BalloonsPops
         //    }
         //}
 
-        private static void InitializeGameSettings()
+        public Game()
         {
             //userInput = new StringBuilder();
-            playfield = new Playfield();
+            this.playfield = new Playfield();
 
-            balloonsLeft = playfield.Width * playfield.Height;
-            userMoves = 0;
-            clearedCells = 0;
+            this.balloonsLeft = playfield.Width * playfield.Height;
+            this.userMoves = 0;
+            this.clearedCells = 0;
         }
 
 
         //Environment setup
 
-        public static void Start()
+        public void Start()
         {
             ConsoleIOEngine.PrintWelcomeMessage();
             //CreateTable();
-            InitializeGameSettings();
-            ConsoleIOEngine.PrintTable(playfield);
-            GameLogic();
+           // InitializeGameSettings();
+            ConsoleIOEngine.PrintTable(this.playfield);
+            this.GameLogic();
         }
 
-        private static void Restart()
+        private void Restart()
         {
             Start();
         }
 
-        private static void Exit()
+        private void Exit()
         {
             ConsoleIOEngine.PrintExitMessage(userMoves, balloonsLeft);
 
             Environment.Exit(0);
         }
 
-        private static void PlayGame()
+        private void PlayGame()
         {
             int currentRow = -1;
             int currentCol = -1;
@@ -109,14 +109,13 @@ namespace BalloonsPops
                 ConsoleIOEngine.PrintInvalidMove();
             }
 
-            ClearEmptyCells();
+            // ClearEmptyCells(); - does nothing
             ConsoleIOEngine.PrintTable(playfield);
         }
 
 
         //Main magic
-
-        private static void ProcessInput(string input)
+        private void ProcessInput(string input)
         {
             switch (input)
             {
@@ -137,91 +136,100 @@ namespace BalloonsPops
             }
         }
 
-        public static void GameLogic()
+        public void GameLogic()
         {
             while (true)
             {
-                userMoves++;
-                PlayGame();
+                this.userMoves++;
+                this.PlayGame();
                 //userInput.Clear();
             }
         }
 
         //Update
-        private static void RemoveAllBaloons(int i, int j, string activeCell)
+        private void RemoveAllBaloons(int row, int col, string selectedCell)
         {
-            if ((i >= 0) && (i <= 4) && (j <= 9) && (j >= 0) && (playfield.Field[i, j] == activeCell))
+            bool isRowValid = row >= 0 && row <= 4;
+            bool isColValid = col <= 9 && col >= 0;            
+
+            if (isRowValid && isColValid)
             {
-                playfield.Field[i, j] = ".";
-                clearedCells++;
+                bool hasCellsEqualValues = this.playfield.Field[row, col] == selectedCell;
 
-                //Up
-                RemoveAllBaloons(i - 1, j, activeCell);
+                if (hasCellsEqualValues)
+                {
+                    this.playfield.Field[row, col] = ".";
+                    this.clearedCells++;
 
-                //Down
-                RemoveAllBaloons(i + 1, j, activeCell);
+                    //Up
+                    this.RemoveAllBaloons(row - 1, col, selectedCell);
 
-                //Left
-                RemoveAllBaloons(i, j + 1, activeCell);
+                    //Down
+                    this.RemoveAllBaloons(row + 1, col, selectedCell);
 
-                //Right
-                RemoveAllBaloons(i, j - 1, activeCell);
+                    //Left
+                    this.RemoveAllBaloons(row, col + 1, selectedCell);
+
+                    //Right
+                    this.RemoveAllBaloons(row, col - 1, selectedCell);
+                }
             }
             else
             {
-                balloonsLeft -= clearedCells;
-                clearedCells = 0;
+                this.balloonsLeft -= this.clearedCells;
+                this.clearedCells = 0;
 
                 return;
             }
         }
 
+        // Does nothing
         private static void ClearEmptyCells()
         {
-            int i;
-            int j;
+            //int row;
+            //int col;
 
-            Queue<string> temp = new Queue<string>();
+            //Queue<string> temp = new Queue<string>();
 
-            for (j = playfield.Height - 1; j >= 0; j--)
-            {
-                for (i = playfield.Width - 1; i >= 0; i--)
-                {
-                    if (playfield.Field[i, j] != ".")
-                    {
-                        temp.Enqueue(playfield.Field[i, j]);
-                        playfield.Field[i, j] = ".";
-                    }
-                }
+            //for (col = playfield.Height - 1; col >= 0; col--)
+            //{
+            //    for (row = playfield.Width - 1; row >= 0; row--)
+            //    {
+            //        if (playfield.Field[row, col] != ".")
+            //        {
+            //            temp.Enqueue(playfield.Field[row, col]);
+            //            playfield.Field[row, col] = ".";
+            //        }
+            //    }
 
-                i = 4;
+            //    row = 4;
 
-                while (temp.Count > 0)
-                {
-                    playfield.Field[i, j] = temp.Dequeue();
-                    i--;
-                }
+            //    while (temp.Count > 0)
+            //    {
+            //        playfield.Field[row, col] = temp.Dequeue();
+            //        row--;
+            //    }
 
-                temp.Clear();
-            }
+            //    temp.Clear();
+            //}
         }
 
         //Checkers
-        private static bool IsLegalMove(int i, int j)
+        private bool IsLegalMove(int row, int col)
         {
-            if ((i < 0) || (j < 0) || (j > playfield.Height - 1) || (i > playfield.Width - 1))
+            if ((row < 0) || (col < 0) || (col > this.playfield.Height - 1) || (row > this.playfield.Width - 1))
             {
                 return false;
             }
             else
             {
-                return (playfield.Field[i, j] != ".");
+                return (this.playfield.Field[row, col] != ".");
             }
         }
 
-        private static bool IsFinished()
+        private bool IsFinished()
         {
-            return (balloonsLeft == 0);
+            return (this.balloonsLeft == 0);
         }
     }
 }

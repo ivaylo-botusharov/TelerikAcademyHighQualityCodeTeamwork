@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace BalloonsPops
+﻿namespace BalloonsPops
 {
-	class Program
-	{
-		
-		static void Main(string[] args)
+	public class Program
+	{		
+		static void Main()
 		{
-			Game.Start();
+            Game firstGame = new Game();
+            firstGame.Start();
 		}
 	}
 }
