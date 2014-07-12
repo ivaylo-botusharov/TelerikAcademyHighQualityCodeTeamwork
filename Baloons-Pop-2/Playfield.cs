@@ -26,6 +26,7 @@
             {
                 return this.width;
             }
+
             private set
             {
                 if (value <= 0)
@@ -43,6 +44,7 @@
             {
                 return this.height;
             }
+
             private set
             {
                 if (value <= 0)
@@ -60,6 +62,7 @@
             {
                 return this.field;
             }
+
             private set
             {
                 if (value == null)

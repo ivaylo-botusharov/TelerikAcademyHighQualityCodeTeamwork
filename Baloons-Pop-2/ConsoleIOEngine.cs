@@ -16,23 +16,29 @@
                 {
                     Console.Write(playfield.Field[i, j] + " ");
                 }
+
                 Console.Write("| ");
                 Console.WriteLine();
             }
+
             Console.WriteLine("   ---------------------");
         }
+
         public static void PrintExitMessage(int userMoves, int balloonsLeft)
         {
             Console.WriteLine("Good Bye \n{0} \n{1}", userMoves, balloonsLeft);
         }
+
         public static void PrintWelcomeMessage()
         {
             Console.WriteLine("Welcome to “Balloons Pops” game. Please try to pop the balloons. Use 'top' to view the top scoreboard, 'restart' to start a new game and 'exit' to quit the game.");
         }
+
         public static void PrintRegisterTopScoreMessage(int userMoves)
         {
             Console.Write("You popped all baloons in {0} moves. Please enter your name for the top scoreboard:", userMoves);
         }
+
         public static void PrintStatistics(SortedDictionary<int, string> statistics)
         {
             int p = 0;
@@ -50,14 +56,17 @@
                 }
             }
         }
+
         public static void PrintInvalidInput()
         {
             Console.WriteLine("Invalid move or command");
         }
+
         public static void PrintInvalidMove()
         {
             Console.WriteLine("Illegal move: cannot pop missing ballon!");
         }
+
         public static string ReadInput()
         {
             Console.Write("Enter a row and column: ");
@@ -65,5 +74,15 @@
             return userInput;
         }
 
+        public static Tuple<int, int> ReadPlayfieldDimensions()
+        {
+            Console.WriteLine("Choose width and height for the playfield");
+            Console.Write("Width - ");
+            int width = int.Parse(Console.ReadLine());
+            Console.Write("Height - ");
+            int height = int.Parse(Console.ReadLine());
+
+            return new Tuple<int, int>(width, height);
+        }
     }
 }
