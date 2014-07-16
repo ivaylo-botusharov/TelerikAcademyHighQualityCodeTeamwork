@@ -5,30 +5,14 @@
 
     public class Game
     {
-        // public const int width = 5;
-        // public const int length = 10;
-        // public static string[,] field = new string[width, length];
-        // private static StringBuilder userInput;
         private Playfield playfield;
         private int balloonsLeft;
         private int userMoves;
         private int clearedCells;
         private SortedDictionary<int, string> statistics;
 
-        // Initialize
-        // public static void CreateTable()
-        // {
-        //     for (int i = 0; i < width; i++)
-        //     {
-        //         for (int j = 0; j < length; j++)
-        //         {
-        //             field[i, j] = RandomGenerator.GetRandomInt();
-        //         }
-        //     }
-        // }
         public Game(Playfield playfield)
         {
-            // userInput = new StringBuilder();
             this.playfield = playfield;
             this.balloonsLeft = playfield.Width * playfield.Height;
             this.userMoves = 0;
@@ -40,50 +24,8 @@
         public void Start()
         {
             ConsoleIOEngine.PrintWelcomeMessage();
-
-            // CreateTable();
-            // InitializeGameSettings();
             ConsoleIOEngine.PrintTable(this.playfield);
             this.GameLogic();
-        }
-
-        public void GameLogic()
-        {
-            while (true)
-            {
-                this.userMoves++;
-                this.PlayGame();
-
-                // userInput.Clear();
-            }
-        }
-
-        // Does nothing
-        private static void ClearEmptyCells()
-        {
-            // int row;
-            // int col;
-
-            // Queue<string> temp = new Queue<string>();
-
-            // for (col = playfield.Height - 1; col >= 0; col--)
-            // {
-            //     for (row = playfield.Width - 1; row >= 0; row--)
-            //     {
-            //         if (playfield.Field[row, col] != ".")
-            //         {
-            //             temp.Enqueue(playfield.Field[row, col]);
-            //             playfield.Field[row, col] = ".";
-            //         }
-            //     }               
-            //     row = 4;               
-            //     while (temp.Count > 0)
-            //     {
-            //         playfield.Field[row, col] = temp.Dequeue();
-            //         row--;
-            //     }               
-            //     temp.Clear();
-            // }
         }
 
         private void Restart()
@@ -97,14 +39,21 @@
 
             Environment.Exit(0);
         }
+
+        public void GameLogic()
+        {
+            while (true)
+            {
+                this.userMoves++;
+                this.PlayGame();
+            }
+        }
         
         private void PlayGame()
         {
             int currentRow = -1;
             int currentCol = -1;
 
-            // Play:
-            //    ReadInput();
             if (this.IsFinished())
             {
                 ConsoleIOEngine.PrintRegisterTopScoreMessage(this.userMoves);
@@ -141,7 +90,6 @@
                 ConsoleIOEngine.PrintInvalidMove();
             }
 
-            // ClearEmptyCells(); - does nothing
             ConsoleIOEngine.PrintTable(this.playfield);
         }
 
