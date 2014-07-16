@@ -170,8 +170,8 @@
         // Update
         private void RemoveAllBaloons(int row, int col, string selectedCell)
         {
-            bool isRowValid = row >= 0 && row <= 4;
-            bool isColValid = col <= 9 && col >= 0;            
+            bool isRowValid = row >= 0 && row < playfield.Height;
+            bool isColValid = col >= 0 && col < playfield.Width;            
 
             if (isRowValid && isColValid)
             {
