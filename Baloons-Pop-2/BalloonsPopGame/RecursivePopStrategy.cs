@@ -1,9 +1,16 @@
-﻿namespace BalloonsPops
+﻿namespace BalloonsPop
 {
+    using System;
+
     public class RecursivePopStrategy : PopStrategy
     {
         public override int PopBaloons(int row, int col, string selectedCellValue, Playfield playfield)
         {
+            if (playfield == null)
+            {
+                throw new ArgumentNullException("playfield", "Playfield can't be null.");
+            }
+
             int poppedBaloons = 0;
             bool isRowValid = row >= 0 && row < playfield.Height;
             bool isColValid = col >= 0 && col < playfield.Width;

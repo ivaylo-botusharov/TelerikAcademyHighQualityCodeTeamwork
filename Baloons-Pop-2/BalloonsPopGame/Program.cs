@@ -1,4 +1,4 @@
-﻿namespace BalloonsPops
+﻿namespace BalloonsPop
 {
     public class Program
     {
