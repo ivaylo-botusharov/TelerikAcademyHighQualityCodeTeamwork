@@ -13,7 +13,7 @@
         {
             RecursivePopStrategy popStrategy = new RecursivePopStrategy();
 
-            popStrategy.PopBaloons(1, 1, "1", null);
+            popStrategy.PopBaloons(1, 1, null);
         }
     }
 }

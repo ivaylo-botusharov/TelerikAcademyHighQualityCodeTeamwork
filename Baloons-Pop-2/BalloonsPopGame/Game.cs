@@ -80,8 +80,7 @@
 
             if (this.IsLegalMove(currentRow, currentCol))
             {
-                string selectedCellValue = this.playfield.Field[currentRow, currentCol];
-                this.RemoveAllBaloons(currentRow, currentCol, selectedCellValue);
+                this.RemoveAllBaloons(currentRow, currentCol);
             }
             else
             {
@@ -114,9 +113,9 @@
         }
 
         // Update
-        private void RemoveAllBaloons(int row, int col, string selectedCellValue)
+        private void RemoveAllBaloons(int row, int col)
         {
-            this.balloonsLeft -= this.popStrategy.PopBaloons(row, col, selectedCellValue, this.playfield);
+            this.balloonsLeft -= this.popStrategy.PopBaloons(row, col, this.playfield);
         }
         
         // Checkers
