@@ -6,17 +6,17 @@
     public class Game
     {
         private Playfield playfield;
+        private PopStrategy popStrategy;
         private int balloonsLeft;
         private int userMoves;
-        private int clearedCells;
         private SortedDictionary<int, string> statistics;
 
-        public Game(Playfield playfield)
+        public Game(Playfield playfield, PopStrategy popStrategy)
         {
             this.playfield = playfield;
+            this.popStrategy = popStrategy;
             this.balloonsLeft = playfield.Width * playfield.Height;
             this.userMoves = 0;
-            this.clearedCells = 0;
             this.statistics = new SortedDictionary<int, string>();
         }
 
@@ -66,8 +66,6 @@
 
             this.ProcessInput(currentInput);
 
-            string activeCell;
-
             var splittedUserInput = currentInput.Split(' ');
 
             try
@@ -82,8 +80,8 @@
 
             if (this.IsLegalMove(currentRow, currentCol))
             {
-                activeCell = this.playfield.Field[currentRow, currentCol];
-                this.RemoveAllBaloons(currentRow, currentCol, activeCell);
+                string selectedCellValue = this.playfield.Field[currentRow, currentCol];
+                this.RemoveAllBaloons(currentRow, currentCol, selectedCellValue);
             }
             else
             {
@@ -116,46 +114,15 @@
         }
 
         // Update
-        private void RemoveAllBaloons(int row, int col, string selectedCell)
+        private void RemoveAllBaloons(int row, int col, string selectedCellValue)
         {
-            bool isRowValid = row >= 0 && row < playfield.Height;
-            bool isColValid = col >= 0 && col < playfield.Width;            
-
-            if (isRowValid && isColValid)
-            {
-                bool hasCellsEqualValues = this.playfield.Field[row, col] == selectedCell;
-
-                if (hasCellsEqualValues)
-                {
-                    this.playfield.Field[row, col] = ".";
-                    this.clearedCells++;
-
-                    // Up
-                    this.RemoveAllBaloons(row - 1, col, selectedCell);
-
-                    // Down
-                    this.RemoveAllBaloons(row + 1, col, selectedCell);
-
-                    // Left
-                    this.RemoveAllBaloons(row, col + 1, selectedCell);
-
-                    // Right
-                    this.RemoveAllBaloons(row, col - 1, selectedCell);
-                }
-            }
-            else
-            {
-                this.balloonsLeft -= this.clearedCells;
-                this.clearedCells = 0;
-
-                return;
-            }
+            this.balloonsLeft -= this.popStrategy.PopBaloons(row, col, selectedCellValue, this.playfield);
         }
         
         // Checkers
         private bool IsLegalMove(int row, int col)
         {
-            if ((row < 0) || (col < 0) || (col > this.playfield.Height - 1) || (row > this.playfield.Width - 1))
+            if ((row < 0) || (row > this.playfield.Height - 1) || (col < 0) || (col > this.playfield.Width - 1))
             {
                 return false;
             }

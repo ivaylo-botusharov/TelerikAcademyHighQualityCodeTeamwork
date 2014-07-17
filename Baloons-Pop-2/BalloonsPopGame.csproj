@@ -48,8 +48,10 @@
       <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="Playfield.cs" />
+    <Compile Include="PopStrategy.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="RandomGenerator.cs" />
+    <Compile Include="RecursivePopStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

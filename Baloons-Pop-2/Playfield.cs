@@ -4,20 +4,40 @@
 
     public class Playfield
     {
-        public const int InitialWidth = 5;
         public const int InitialHeight = 10;
+        public const int InitialWidth = 5;
 
-        private int width;
         private int height;
+        private int width;
+
         private string[,] field;
 
-        public Playfield(int width = InitialWidth, int height = InitialHeight)
+        public Playfield(int height = InitialHeight, int width = InitialWidth)
         {
-            this.Width = width;
             this.Height = height;
-            this.Field = new string[this.Width, this.Height];
+            this.Width = width;
+
+            this.Field = new string[height, width];
 
             this.InitializePlayfield();
+        }
+        
+        public int Height
+        {
+            get
+            {
+                return this.height;
+            }
+
+            private set
+            {
+                if (value <= 0)
+                {
+                    throw new ArgumentOutOfRangeException("Playfield height can not be negative number.");
+                }
+
+                this.height = value;
+            }
         }
 
         public int Width
@@ -35,24 +55,6 @@
                 }
 
                 this.width = value;
-            }
-        }
-
-        public int Height
-        {
-            get
-            {
-                return this.height;
-            }
-
-            private set
-            {
-                if (value <= 0)
-                {
-                    throw new ArgumentOutOfRangeException("Playfield height can not be negative number.");
-                }
-
-                this.height = value;
             }
         }
 
@@ -76,9 +78,9 @@
 
         private void InitializePlayfield()
         {
-            for (int row = 0; row < this.Width; row++)
+            for (int row = 0; row < this.Height; row++)
             {
-                for (int col = 0; col < this.Height; col++)
+                for (int col = 0; col < this.Width; col++)
                 {
                     this.Field[row, col] = RandomGenerator.GetRandomInt();
                 }

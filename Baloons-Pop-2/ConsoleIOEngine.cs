@@ -9,12 +9,12 @@
         {
             Console.WriteLine("    0 1 2 3 4 5 6 7 8 9");
             Console.WriteLine("   ---------------------");
-            for (int i = 0; i < playfield.Width; i++)
+            for (int row = 0; row < playfield.Height; row++)
             {
-                Console.Write(i + " | ");
-                for (int j = 0; j < playfield.Height; j++)
+                Console.Write(row + " | ");
+                for (int col = 0; col < playfield.Width; col++)
                 {
-                    Console.Write(playfield.Field[i, j] + " ");
+                    Console.Write(playfield.Field[row, col] + " ");
                 }
 
                 Console.Write("| ");
@@ -36,7 +36,7 @@
 
         public static void PrintRegisterTopScoreMessage(int userMoves)
         {
-            Console.Write("You popped all baloons in {0} moves. Please enter your name for the top scoreboard:", userMoves);
+            Console.Write("You popped all balloons in {0} moves. Please enter your name for the top scoreboard:", userMoves);
         }
 
         public static void PrintStatistics(SortedDictionary<int, string> statistics)
@@ -64,7 +64,7 @@
 
         public static void PrintInvalidMove()
         {
-            Console.WriteLine("Illegal move: cannot pop missing ballon!");
+            Console.WriteLine("Illegal move: cannot pop missing balloon!");
         }
 
         public static string ReadInput()
@@ -76,13 +76,15 @@
 
         public static Tuple<int, int> ReadPlayfieldDimensions()
         {
-            Console.WriteLine("Choose width and height for the playfield");
-            Console.Write("Width - ");
-            int width = int.Parse(Console.ReadLine());
+            Console.WriteLine("Choose height and width for the playfield");
+            
             Console.Write("Height - ");
             int height = int.Parse(Console.ReadLine());
 
-            return new Tuple<int, int>(width, height);
+            Console.Write("Width - ");
+            int width = int.Parse(Console.ReadLine());
+
+            return new Tuple<int, int>(height, width);
         }
     }
 }
