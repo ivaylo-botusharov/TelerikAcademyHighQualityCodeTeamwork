@@ -7,21 +7,32 @@
     {
         public static void PrintTable(Playfield playfield)
         {
-            Console.WriteLine("    0 1 2 3 4 5 6 7 8 9");
-            Console.WriteLine("   ---------------------");
+            string columnHeader = "    ";
+            for (int i = 0; i < playfield.Width; i++)
+            {
+                columnHeader += i.ToString().PadLeft(3);
+            }
+
+            Console.WriteLine(columnHeader);
+
+
+            Console.WriteLine("    " + new String('-', playfield.Width * 3));
+
+
+
             for (int row = 0; row < playfield.Height; row++)
             {
-                Console.Write(row + " | ");
+                Console.Write(row.ToString().PadLeft(2) + " | ");
                 for (int col = 0; col < playfield.Width; col++)
                 {
-                    Console.Write(playfield.Field[row, col] + " ");
+                    Console.Write(playfield.Field[row, col].ToString().PadLeft(2) + " ");
                 }
 
                 Console.Write("| ");
                 Console.WriteLine();
             }
 
-            Console.WriteLine("   ---------------------");
+            Console.WriteLine("    " + new String('-', playfield.Width * 3));
         }
 
         public static void PrintExitMessage(int userMoves, int balloonsLeft)
@@ -74,17 +85,26 @@
             return userInput;
         }
 
-        public static Tuple<int, int> ReadPlayfieldDimensions()
+        public static int ReadPlayfieldSize()
         {
-            Console.WriteLine("Choose height and width for the playfield");
+            Console.WriteLine("You can choose from the following playfield sizes: ");
+            Console.WriteLine("1 - Small");
+            Console.WriteLine("2 - Medium");
+            Console.WriteLine("3 - Large");
+            Console.WriteLine("Enter number: ");
+
+            string input = Console.ReadLine();
+            int size;
+            bool isInputCorrect = int.TryParse(input, out size);
             
-            Console.Write("Height - ");
-            int height = int.Parse(Console.ReadLine());
+            while (!isInputCorrect)
+            {
+                Console.WriteLine("Wrong input. Enter again: ");
+                input = Console.ReadLine();
+                isInputCorrect = int.TryParse(input, out size);
+            }
 
-            Console.Write("Width - ");
-            int width = int.Parse(Console.ReadLine());
-
-            return new Tuple<int, int>(height, width);
+            return size;
         }
     }
 }

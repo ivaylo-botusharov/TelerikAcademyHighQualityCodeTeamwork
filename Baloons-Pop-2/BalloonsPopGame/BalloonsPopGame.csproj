@@ -47,11 +47,15 @@
     <Compile Include="Game.cs">
       <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
     </Compile>
+    <Compile Include="LargePlayfieldFactory.cs" />
+    <Compile Include="MediumPlayfieldFactory.cs" />
     <Compile Include="Playfield.cs" />
+    <Compile Include="PlayfieldFactory.cs" />
     <Compile Include="PopStrategy.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="RandomGenerator.cs" />
     <Compile Include="RecursivePopStrategy.cs" />
+    <Compile Include="SmallPlayfieldFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
