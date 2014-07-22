@@ -1,7 +1,8 @@
 ﻿namespace BalloonsPop
 {
     using System;
-    using System.Collections.Generic;
+
+    using Wintellect.PowerCollections;
 
     public static class ConsoleIOEngine
     {
@@ -45,25 +46,27 @@
             Console.WriteLine("Welcome to “Balloons Pops” game. Please try to pop the balloons. Use 'top' to view the top scoreboard, 'restart' to start a new game and 'exit' to quit the game.");
         }
 
-        public static void PrintRegisterTopScoreMessage(int userMoves)
+        public static void PrintWinMessage(int userMoves)
         {
-            Console.Write("You popped all balloons in {0} moves. Please enter your name for the top scoreboard:", userMoves);
+            Console.Write("You popped all balloons in {0} moves. Please enter your name for the top scoreboard: ", userMoves);
         }
 
-        public static void PrintStatistics(SortedDictionary<int, string> statistics)
+        public static void PrintStatistics(OrderedMultiDictionary<int, string> statistics)
         {
-            int p = 0;
+            int resultsCount = Math.Min(5, statistics.Count);
+            int counter = 0;
+
             Console.WriteLine("Scoreboard:");
-            foreach (KeyValuePair<int, string> s in statistics)
+            foreach (var result in statistics)
             {
-                if (p == 4)
+                if (counter == resultsCount)
                 {
                     break;
                 }
                 else
                 {
-                    p++;
-                    Console.WriteLine("{0}. {1} --> {2} moves", p, s.Value, s.Key);
+                    counter++;
+                    Console.WriteLine("{0}. {1} --> {2} moves", resultsCount, result.Value, result.Key);
                 }
             }
         }
@@ -96,7 +99,7 @@
             string input = Console.ReadLine();
             int size;
             bool isInputCorrect = int.TryParse(input, out size);
-            
+
             while (!isInputCorrect)
             {
                 Console.WriteLine("Wrong input. Enter again: ");
