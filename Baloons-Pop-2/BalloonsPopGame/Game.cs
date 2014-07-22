@@ -1,139 +1,196 @@
 ﻿namespace BalloonsPop
 {
     using System;
-    using System.Collections.Generic;
 
-    public class Game
+    using Wintellect.PowerCollections;
+
+    public static class Game
     {
-        private Playfield playfield;
-        private PopStrategy popStrategy;
-        private int balloonsLeft;
-        private int userMoves;
-        private SortedDictionary<int, string> statistics;
+        private static Playfield playfield;
+        private static PopStrategy popStrategy;
+        private static int balloonsLeft;
+        private static int userMoves;
+        private static OrderedMultiDictionary<int, string> statistics = new OrderedMultiDictionary<int, string>(true);
 
-        public Game(Playfield playfield, PopStrategy popStrategy)
+        public static void Start()
         {
-            this.playfield = playfield;
-            this.popStrategy = popStrategy;
-            this.balloonsLeft = playfield.Width * playfield.Height;
-            this.userMoves = 0;
-            this.statistics = new SortedDictionary<int, string>();
-        }
+            Playfield gamePlayfield = InitializePlayfield();
+            PopStrategy gamePopStrategy = new RecursivePopStrategy();
 
-        // Environment setup
-        public void Start()
-        {
+            InitializeGame(gamePlayfield, gamePopStrategy);
             ConsoleIOEngine.PrintWelcomeMessage();
-            ConsoleIOEngine.PrintTable(this.playfield);
-            this.GameLogic();
+            ConsoleIOEngine.PrintTable(playfield);
+            PlayGame();
         }
 
-        private void Restart()
+        private static void InitializeGame(Playfield gamePlayfield, PopStrategy gamePopStrategy)
         {
-            this.Start();
+            playfield = gamePlayfield;
+            popStrategy = gamePopStrategy;
+            balloonsLeft = gamePlayfield.Width * gamePlayfield.Height;
+            userMoves = 0;
         }
 
-        private void Exit()
+        private static Playfield InitializePlayfield()
         {
-            ConsoleIOEngine.PrintExitMessage(this.userMoves, this.balloonsLeft);
+            int playfieldSize = ConsoleIOEngine.ReadPlayfieldSize();
+            Playfield playfield = null;
 
-            Environment.Exit(0);
+            bool isPlayfieldSizeIncorrect = true;
+
+            while (isPlayfieldSizeIncorrect)
+            {
+                PlayfieldFactory playfiledFactory = null;
+
+                switch (playfieldSize)
+                {
+                    case 1:
+                        playfiledFactory = new SmallPlayfieldFactory();
+                        playfield = playfiledFactory.CreatePlayfield();
+                        isPlayfieldSizeIncorrect = false;
+                        break;
+                    case 2:
+                        playfiledFactory = new MediumPlayfieldFactory();
+                        playfield = playfiledFactory.CreatePlayfield();
+                        isPlayfieldSizeIncorrect = false;
+                        break;
+                    case 3:
+                        playfiledFactory = new LargePlayfieldFactory();
+                        playfield = playfiledFactory.CreatePlayfield();
+                        isPlayfieldSizeIncorrect = false;
+                        break;
+                    default:
+                        Console.WriteLine("You have entered incorrect field size");
+                        break;
+                }
+            }
+
+            return playfield;
         }
 
-        public void GameLogic()
+        private static void PlayGame()
         {
-            while (true)
+            while (!IsFinished)
             {
-                this.userMoves++;
-                this.PlayGame();
-            }
-        }
-        
-        private void PlayGame()
-        {
-            int currentRow = -1;
-            int currentCol = -1;
+                userMoves++;
 
-            if (this.IsFinished())
-            {
-                ConsoleIOEngine.PrintRegisterTopScoreMessage(this.userMoves);
-                this.statistics.Add(this.userMoves, string.Empty);
-                ConsoleIOEngine.PrintStatistics(this.statistics);
-                this.Start();
+                string currentInput = ConsoleIOEngine.ReadInput();
+
+                ProcessInput(currentInput);
+
+                ConsoleIOEngine.PrintTable(playfield);
             }
 
-            string currentInput = ConsoleIOEngine.ReadInput();
-
-            this.ProcessInput(currentInput);
-
-            var splittedUserInput = currentInput.Split(' ');
-
-            try
-            {
-                currentRow = int.Parse(splittedUserInput[0]);
-                currentCol = int.Parse(splittedUserInput[1]);
-            }
-            catch (Exception)
-            {
-                ConsoleIOEngine.PrintInvalidInput();
-            }
-
-            if (this.IsLegalMove(currentRow, currentCol))
-            {
-                this.RemoveAllBaloons(currentRow, currentCol);
-            }
-            else
-            {
-                ConsoleIOEngine.PrintInvalidMove();
-            }
-
-            ConsoleIOEngine.PrintTable(this.playfield);
+            AddUserToScoreboard();
+            ConsoleIOEngine.PrintStatistics(statistics);
+            ProcessUserDescision();
         }
 
-        // Main magic
-        private void ProcessInput(string input)
+        private static void ProcessInput(string input)
         {
             switch (input)
             {
                 case "top":
-                    ConsoleIOEngine.PrintStatistics(this.statistics);
+                    ConsoleIOEngine.PrintStatistics(statistics);
                     break;
                 case "restart":
-                    this.Restart();
+                    Start();
                     break;
                 case "exit":
-                    this.Exit();
-                    break;
-                case "":
-                    ConsoleIOEngine.PrintInvalidInput();
+                    Exit();
                     break;
                 default:
+                    ProcessInputBalloonPosition(input);
                     break;
             }
         }
 
-        // Update
-        private void RemoveAllBaloons(int row, int col)
+        private static bool IsFinished
         {
-            this.balloonsLeft -= this.popStrategy.PopBaloons(row, col, this.playfield);
-        }
-        
-        // Checkers
-        private bool IsLegalMove(int row, int col)
-        {
-            if ((row < 0) || (row > this.playfield.Height - 1) || (col < 0) || (col > this.playfield.Width - 1))
+            get
             {
-                return false;
+                return balloonsLeft == 0;
+            }
+        }
+
+        private static void Exit()
+        {
+            ConsoleIOEngine.PrintExitMessage(userMoves, balloonsLeft);
+
+            Environment.Exit(0);
+        }
+
+        private static void ProcessInputBalloonPosition(string input)
+        {
+            try
+            {
+                var splittedUserInput = input.Split(' ');
+                int currentRow = int.Parse(splittedUserInput[0]);
+                int currentCol = int.Parse(splittedUserInput[1]);
+
+                if (IsLegalMove(currentRow, currentCol))
+                {
+                    RemoveAllBaloons(currentRow, currentCol);
+                }
+                else
+                {
+                    ConsoleIOEngine.PrintInvalidMove();
+                }
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Row and col are not entered in the valid format.");
+                ConsoleIOEngine.PrintInvalidInput();
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine("You did not enter two numbers for row and col.");
+                ConsoleIOEngine.PrintInvalidInput();
+            }
+        }
+
+        private static void AddUserToScoreboard()
+        {
+            ConsoleIOEngine.PrintWinMessage(userMoves);
+
+            string username = Console.ReadLine();
+
+            statistics.Add(userMoves, username);
+        }
+
+        private static void ProcessUserDescision()
+        {
+            Console.WriteLine("Do you want to play again: Yes/No");
+            string userDescision = Console.ReadLine().ToLower();
+
+            if (userDescision == "yes")
+            {
+                Start();
             }
             else
             {
-                return this.playfield.Field[row, col] != ".";
+                Exit();
             }
         }
 
-        private bool IsFinished()
+        private static void RemoveAllBaloons(int row, int col)
         {
-            return this.balloonsLeft == 0;
+            balloonsLeft -= popStrategy.PopBaloons(row, col, playfield);
+        }
+
+        private static bool IsLegalMove(int row, int col)
+        {
+            bool isValidRow = (row >= 0) && (row < playfield.Height);
+            bool isValidCol = (col >= 0) && (col < playfield.Width);
+
+            if (isValidRow && isValidCol)
+            {
+                return playfield.Field[row, col] != ".";
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
