@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace BalloonsPop
+﻿namespace BalloonsPop
 {
     public abstract class PlayfieldFactory
     {
