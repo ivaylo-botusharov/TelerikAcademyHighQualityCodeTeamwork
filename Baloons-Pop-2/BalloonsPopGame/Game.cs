@@ -53,8 +53,8 @@
             PopStrategy gamePopStrategy = new RecursivePopStrategy();
 
             this.InitializeGame(gamePlayfield, gamePopStrategy);
-            ConsoleIOEngine.PrintWelcomeMessage();
-            ConsoleIOEngine.PrintTable(this.playfield);
+            ConsoleIOFacade.PrintWelcomeMessage();
+            ConsoleIOFacade.PrintTable(this.playfield);
             this.PlayGame();
         }
 
@@ -79,7 +79,7 @@
         /// <returns></returns>
         private Playfield InitializePlayfield()
         {
-            int playfieldSize = ConsoleIOEngine.ReadPlayfieldSize();
+            int playfieldSize = ConsoleIOFacade.ReadPlayfieldSize();
             Playfield playfield = null;
 
             bool isPlayfieldSizeIncorrect = true;
@@ -124,15 +124,15 @@
             {
                 this.userMoves++;
 
-                string currentInput = ConsoleIOEngine.ReadInput();
+                string currentInput = ConsoleIOFacade.ReadInput();
 
                 this.ProcessInput(currentInput);
 
-                ConsoleIOEngine.PrintTable(this.playfield);
+                ConsoleIOFacade.PrintTable(this.playfield);
             }
 
             this.AddUserToScoreboard();
-            ConsoleIOEngine.PrintStatistics(this.statistics);
+            ConsoleIOFacade.PrintStatistics(this.statistics);
             this.ProcessUserDescision();
         }
 
@@ -146,7 +146,7 @@
             switch (input)
             {
                 case "top":
-                    ConsoleIOEngine.PrintStatistics(this.statistics);
+                    ConsoleIOFacade.PrintStatistics(this.statistics);
                     break;
                 case "restart":
                     this.Start();
@@ -162,7 +162,7 @@
 
         private void Exit()
         {
-            ConsoleIOEngine.PrintExitMessage(this.userMoves, this.balloonsLeft);
+            ConsoleIOFacade.PrintExitMessage(this.userMoves, this.balloonsLeft);
 
             Environment.Exit(0);
         }
@@ -181,24 +181,24 @@
                 }
                 else
                 {
-                    ConsoleIOEngine.PrintInvalidMove();
+                    ConsoleIOFacade.PrintInvalidMove();
                 }
             }
             catch (FormatException)
             {
                 Console.WriteLine("Row and col are not entered in the valid format.");
-                ConsoleIOEngine.PrintInvalidInput();
+                ConsoleIOFacade.PrintInvalidInput();
             }
             catch (IndexOutOfRangeException)
             {
                 Console.WriteLine("You did not enter two numbers for row and col.");
-                ConsoleIOEngine.PrintInvalidInput();
+                ConsoleIOFacade.PrintInvalidInput();
             }
         }
 
         private void AddUserToScoreboard()
         {
-            ConsoleIOEngine.PrintWinMessage(this.userMoves);
+            ConsoleIOFacade.PrintWinMessage(this.userMoves);
 
             string username = Console.ReadLine();
 

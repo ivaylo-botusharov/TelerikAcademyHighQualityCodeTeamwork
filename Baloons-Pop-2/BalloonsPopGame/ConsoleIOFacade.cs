@@ -4,7 +4,7 @@
 
     using Wintellect.PowerCollections;
 
-    public static class ConsoleIOEngine
+    public static class ConsoleIOFacade
     {
         public static void PrintTable(Playfield playfield)
         {
