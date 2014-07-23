@@ -4,7 +4,7 @@
     {
         public static void Main()
         {
-            Game.Start();
+            Game.Instance.Start();
         }
     }
 }

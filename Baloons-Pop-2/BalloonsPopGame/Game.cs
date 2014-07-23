@@ -6,22 +6,40 @@
     /// <summary>
     /// This class implements the main logic of the game.
     /// </summary>
-    public static class Game
+    public class Game
     {
-        private static Playfield playfield;
-        private static PopStrategy popStrategy;
-        private static int balloonsLeft;
-        private static int userMoves;
-        private static OrderedMultiDictionary<int, string> statistics = new OrderedMultiDictionary<int, string>(true);
-        
-        /// <summary>
-        /// This property simply returns the state of the game.
-        /// </summary>
-        private static bool IsFinished
+        private static Game instance;
+        private Playfield playfield;
+        private PopStrategy popStrategy;
+        private int balloonsLeft;
+        private int userMoves;
+        private OrderedMultiDictionary<int, string> statistics = new OrderedMultiDictionary<int, string>(true);        
+
+        private Game()
+        {
+        }
+
+        public static Game Instance
         {
             get
             {
-                return balloonsLeft == 0;
+                if (instance == null)
+                {
+                    instance = new Game();
+                }
+
+                return instance;
+            }
+        }
+
+        /// <summary>
+        /// This property simply returns the state of the game.
+        /// </summary>
+        private bool IsFinished
+        {
+            get
+            {
+                return this.balloonsLeft == 0;
             }
         }
 
@@ -29,15 +47,15 @@
         /// This method initialize the playfield and the strategy for popping the balloons and then
         /// initilize the game. After everything is ready starts the game life cycle.
         /// </summary>
-        public static void Start()
+        public void Start()
         {
-            Playfield gamePlayfield = InitializePlayfield();
+            Playfield gamePlayfield = this.InitializePlayfield();
             PopStrategy gamePopStrategy = new RecursivePopStrategy();
 
-            InitializeGame(gamePlayfield, gamePopStrategy);
+            this.InitializeGame(gamePlayfield, gamePopStrategy);
             ConsoleIOEngine.PrintWelcomeMessage();
-            ConsoleIOEngine.PrintTable(playfield);
-            PlayGame();
+            ConsoleIOEngine.PrintTable(this.playfield);
+            this.PlayGame();
         }
 
         /// <summary>
@@ -46,12 +64,12 @@
         /// </summary>
         /// <param name="gamePlayfield"></param>
         /// <param name="gamePopStrategy"></param>
-        private static void InitializeGame(Playfield gamePlayfield, PopStrategy gamePopStrategy)
+        private void InitializeGame(Playfield gamePlayfield, PopStrategy gamePopStrategy)
         {
-            playfield = gamePlayfield;
-            popStrategy = gamePopStrategy;
-            balloonsLeft = gamePlayfield.Width * gamePlayfield.Height;
-            userMoves = 0;
+            this.playfield = gamePlayfield;
+            this.popStrategy = gamePopStrategy;
+            this.balloonsLeft = gamePlayfield.Width * gamePlayfield.Height;
+            this.userMoves = 0;
         }
 
         /// <summary>
@@ -59,7 +77,7 @@
         /// with the user desired dimensions.
         /// </summary>
         /// <returns></returns>
-        private static Playfield InitializePlayfield()
+        private Playfield InitializePlayfield()
         {
             int playfieldSize = ConsoleIOEngine.ReadPlayfieldSize();
             Playfield playfield = null;
@@ -100,22 +118,22 @@
         /// This method runs the game life cycle, and waits for a user input on each loop. When the life cycle
         /// ends it adds the user to the score board and print the statistics.
         /// </summary>
-        private static void PlayGame()
+        private void PlayGame()
         {
             while (!IsFinished)
             {
-                userMoves++;
+                this.userMoves++;
 
                 string currentInput = ConsoleIOEngine.ReadInput();
 
-                ProcessInput(currentInput);
+                this.ProcessInput(currentInput);
 
-                ConsoleIOEngine.PrintTable(playfield);
+                ConsoleIOEngine.PrintTable(this.playfield);
             }
 
-            AddUserToScoreboard();
-            ConsoleIOEngine.PrintStatistics(statistics);
-            ProcessUserDescision();
+            this.AddUserToScoreboard();
+            ConsoleIOEngine.PrintStatistics(this.statistics);
+            this.ProcessUserDescision();
         }
 
         /// <summary>
@@ -123,33 +141,33 @@
         /// a valid text command it process it as coordinates for a move.
         /// </summary>
         /// <param name="input"></param>
-        private static void ProcessInput(string input)
+        private void ProcessInput(string input)
         {
             switch (input)
             {
                 case "top":
-                    ConsoleIOEngine.PrintStatistics(statistics);
+                    ConsoleIOEngine.PrintStatistics(this.statistics);
                     break;
                 case "restart":
-                    Start();
+                    this.Start();
                     break;
                 case "exit":
-                    Exit();
+                    this.Exit();
                     break;
                 default:
-                    ProcessInputBalloonPosition(input);
+                    this.ProcessInputBalloonPosition(input);
                     break;
             }
         }
 
-        private static void Exit()
+        private void Exit()
         {
-            ConsoleIOEngine.PrintExitMessage(userMoves, balloonsLeft);
+            ConsoleIOEngine.PrintExitMessage(this.userMoves, this.balloonsLeft);
 
             Environment.Exit(0);
         }
 
-        private static void ProcessInputBalloonPosition(string input)
+        private void ProcessInputBalloonPosition(string input)
         {
             try
             {
@@ -157,9 +175,9 @@
                 int currentRow = int.Parse(splittedUserInput[0]);
                 int currentCol = int.Parse(splittedUserInput[1]);
 
-                if (IsLegalMove(currentRow, currentCol))
+                if (this.IsLegalMove(currentRow, currentCol))
                 {
-                    RemoveAllBaloons(currentRow, currentCol);
+                    this.RemoveAllBaloons(currentRow, currentCol);
                 }
                 else
                 {
@@ -178,43 +196,43 @@
             }
         }
 
-        private static void AddUserToScoreboard()
+        private void AddUserToScoreboard()
         {
-            ConsoleIOEngine.PrintWinMessage(userMoves);
+            ConsoleIOEngine.PrintWinMessage(this.userMoves);
 
             string username = Console.ReadLine();
 
-            statistics.Add(userMoves, username);
+            this.statistics.Add(this.userMoves, username);
         }
 
-        private static void ProcessUserDescision()
+        private void ProcessUserDescision()
         {
             Console.WriteLine("Do you want to play again: Yes/No");
             string userDescision = Console.ReadLine().ToLower();
 
             if (userDescision == "yes")
             {
-                Start();
+                this.Start();
             }
             else
             {
-                Exit();
+                this.Exit();
             }
         }
 
-        private static void RemoveAllBaloons(int row, int col)
+        private void RemoveAllBaloons(int row, int col)
         {
-            balloonsLeft -= popStrategy.PopBaloons(row, col, playfield);
+            this.balloonsLeft -= this.popStrategy.PopBaloons(row, col, this.playfield);
         }
 
-        private static bool IsLegalMove(int row, int col)
+        private bool IsLegalMove(int row, int col)
         {
-            bool isValidRow = (row >= 0) && (row < playfield.Height);
-            bool isValidCol = (col >= 0) && (col < playfield.Width);
+            bool isValidRow = (row >= 0) && (row < this.playfield.Height);
+            bool isValidCol = (col >= 0) && (col < this.playfield.Width);
 
             if (isValidRow && isValidCol)
             {
-                return playfield.Field[row, col] != ".";
+                return this.playfield.Field[row, col] != ".";
             }
             else
             {
