@@ -1,9 +1,11 @@
 ﻿namespace BalloonsPop
 {
     using System;
-
     using Wintellect.PowerCollections;
 
+    /// <summary>
+    /// This class implements the main logic of the game.
+    /// </summary>
     public static class Game
     {
         private static Playfield playfield;
@@ -11,7 +13,22 @@
         private static int balloonsLeft;
         private static int userMoves;
         private static OrderedMultiDictionary<int, string> statistics = new OrderedMultiDictionary<int, string>(true);
+        
+        /// <summary>
+        /// This property simply returns the state of the game.
+        /// </summary>
+        private static bool IsFinished
+        {
+            get
+            {
+                return balloonsLeft == 0;
+            }
+        }
 
+        /// <summary>
+        /// This method initialize the playfield and the strategy for popping the balloons and then
+        /// initilize the game. After everything is ready starts the game life cycle.
+        /// </summary>
         public static void Start()
         {
             Playfield gamePlayfield = InitializePlayfield();
@@ -23,6 +40,12 @@
             PlayGame();
         }
 
+        /// <summary>
+        /// This method requires a playfield and a pop strategy and initialize all the game properties 
+        /// to their initial state.
+        /// </summary>
+        /// <param name="gamePlayfield"></param>
+        /// <param name="gamePopStrategy"></param>
         private static void InitializeGame(Playfield gamePlayfield, PopStrategy gamePopStrategy)
         {
             playfield = gamePlayfield;
@@ -31,6 +54,11 @@
             userMoves = 0;
         }
 
+        /// <summary>
+        /// This method implements the factory design pattern for instantiating a playfield
+        /// with the user desired dimensions.
+        /// </summary>
+        /// <returns></returns>
         private static Playfield InitializePlayfield()
         {
             int playfieldSize = ConsoleIOEngine.ReadPlayfieldSize();
@@ -68,6 +96,10 @@
             return playfield;
         }
 
+        /// <summary>
+        /// This method runs the game life cycle, and waits for a user input on each loop. When the life cycle
+        /// ends it adds the user to the score board and print the statistics.
+        /// </summary>
         private static void PlayGame()
         {
             while (!IsFinished)
@@ -86,6 +118,11 @@
             ProcessUserDescision();
         }
 
+        /// <summary>
+        /// This method is responsible for processing the user input on each loop. If the user input is not 
+        /// a valid text command it process it as coordinates for a move.
+        /// </summary>
+        /// <param name="input"></param>
         private static void ProcessInput(string input)
         {
             switch (input)
@@ -102,14 +139,6 @@
                 default:
                     ProcessInputBalloonPosition(input);
                     break;
-            }
-        }
-
-        private static bool IsFinished
-        {
-            get
-            {
-                return balloonsLeft == 0;
             }
         }
 
