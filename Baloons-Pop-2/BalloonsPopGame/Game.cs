@@ -162,6 +162,9 @@
             }
         }
 
+        /// <summary>
+        /// The method prints an exit message and exit the game.
+        /// </summary>
         private void Exit()
         {
             ConsoleIOFacade.PrintExitMessage(this.userMoves, this.balloonsLeft);
@@ -169,6 +172,11 @@
             Environment.Exit(0);
         }
 
+        /// <summary>
+        /// The method get the user input for wanted baloon to pop. It is used if no other command from the user
+        /// is executed. If the user input for row and col is not valid, the method print appropriate message to the user.
+        /// </summary>
+        /// <param name="input"></param>
         private void ProcessInputBalloonPosition(string input)
         {
             try
@@ -200,6 +208,10 @@
             }
         }
 
+        /// <summary>
+        /// After winning a game, this method is used to ask the user for it's name
+        /// and add him / her to the scoreboard.
+        /// </summary>
         private void AddUserToScoreboard()
         {
             ConsoleIOFacade.PrintWinMessage(this.userMoves);
@@ -209,6 +221,10 @@
             this.statistics.Add(this.userMoves, username);
         }
 
+        /// <summary>
+        /// This method is used after the user win the game. The method simply asks the user if
+        /// he / she wants to play again.
+        /// </summary>
         private void ProcessUserDescision()
         {
             // extract to consoleIO
@@ -225,11 +241,23 @@
             }
         }
 
+        /// <summary>
+        /// The method pops all baloons which are neighbours to the poped baloon
+        /// if they have got equal values. After all baloons are poped removed it from all baloons.
+        /// </summary>
+        /// <param name="row">The row position for the baloon the user wants to pop</param>
+        /// <param name="col">The col position for the baloon the user wants to pop</param>
         private void RemoveAllBaloons(int row, int col)
         {
             this.balloonsLeft -= this.popStrategy.PopBaloons(row, col, this.playfield);
         }
 
+        /// <summary>
+        /// The method check if the user input for baloon to pop is valid.
+        /// </summary>
+        /// <param name="row">The row position for the baloon the user wants to pop</param>
+        /// <param name="col">The col position for the baloon the user wants to pop</param>
+        /// <returns></returns>
         private bool IsLegalMove(int row, int col)
         {
             bool isValidRow = (row >= 0) && (row < this.playfield.Height);
