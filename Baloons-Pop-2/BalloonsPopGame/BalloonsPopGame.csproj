@@ -46,10 +46,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsoleIOFacade.cs" />
+    <Compile Include="UserInputOutput\ConsoleIOFacade.cs" />
     <Compile Include="Game.cs">
       <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
     </Compile>
+    <Compile Include="UserInputOutput\ConsoleMessagePrinter.cs" />
     <Compile Include="LargePlayfieldFactory.cs" />
     <Compile Include="MediumPlayfieldFactory.cs" />
     <Compile Include="Playfield.cs" />

@@ -1,5 +1,6 @@
 ﻿namespace BalloonsPop
 {
+    using BalloonsPop.UserInputOutput;
     using System;
     using Wintellect.PowerCollections;
 
@@ -106,6 +107,7 @@
                         isPlayfieldSizeIncorrect = false;
                         break;
                     default:
+                        // Extract to consoleIO
                         Console.WriteLine("You have entered incorrect field size");
                         break;
                 }
@@ -132,7 +134,7 @@
             }
 
             this.AddUserToScoreboard();
-            ConsoleIOFacade.PrintStatistics(this.statistics);
+            ConsoleIOFacade.PrintScoreboard(this.statistics);
             this.ProcessUserDescision();
         }
 
@@ -146,7 +148,7 @@
             switch (input)
             {
                 case "top":
-                    ConsoleIOFacade.PrintStatistics(this.statistics);
+                    ConsoleIOFacade.PrintScoreboard(this.statistics);
                     break;
                 case "restart":
                     this.Start();
@@ -186,11 +188,13 @@
             }
             catch (FormatException)
             {
+                //extract to consoleIO or remove
                 Console.WriteLine("Row and col are not entered in the valid format.");
                 ConsoleIOFacade.PrintInvalidInput();
             }
             catch (IndexOutOfRangeException)
             {
+                // extract to ConsoleIOFacade or remove
                 Console.WriteLine("You did not enter two numbers for row and col.");
                 ConsoleIOFacade.PrintInvalidInput();
             }
@@ -200,13 +204,14 @@
         {
             ConsoleIOFacade.PrintWinMessage(this.userMoves);
 
-            string username = Console.ReadLine();
+            string username = ConsoleIOFacade.ReadUserName();
 
             this.statistics.Add(this.userMoves, username);
         }
 
         private void ProcessUserDescision()
         {
+            // extract to consoleIO
             Console.WriteLine("Do you want to play again: Yes/No");
             string userDescision = Console.ReadLine().ToLower();
 
