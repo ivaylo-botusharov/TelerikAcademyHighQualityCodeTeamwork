@@ -1,16 +1,20 @@
 ﻿namespace BalloonsPop.UserInputOutput
 {
     using System;
+    using System.Text;
     using Wintellect.PowerCollections;
 
     public static class ConsoleIOFacade
     {
-        public static void PrintScoreboard(OrderedMultiDictionary<int, string> statistics)
+        public static string CreateScoreboardString(OrderedMultiDictionary<int, string> statistics)
         {
             int resultsCount = Math.Min(5, statistics.Count);
             int counter = 0;
 
-            Console.WriteLine("Scoreboard:");
+            StringBuilder scoreboard = new StringBuilder();
+
+            scoreboard.AppendLine("Scoreboard:");
+
             foreach (var result in statistics)
             {
                 if (counter == resultsCount)
@@ -20,9 +24,12 @@
                 else
                 {
                     counter++;
-                    Console.WriteLine("{0}. {1} --> {2} moves", resultsCount, result.Value, result.Key);
+                    var format = String.Format("{0}. {1} --> {2} moves", resultsCount, result.Value, result.Key);
+                    scoreboard.AppendLine(format);
                 }
             }
+
+            return scoreboard.ToString();
         }
 
         public static void PrintTable(Playfield playfield)

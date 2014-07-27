@@ -134,7 +134,10 @@
             }
 
             this.AddUserToScoreboard();
-            ConsoleIOFacade.PrintScoreboard(this.statistics);
+
+            string scoreboard = ConsoleIOFacade.CreateScoreboardString(this.statistics);
+            Console.WriteLine(scoreboard);
+
             this.ProcessUserDescision();
         }
 
@@ -148,7 +151,7 @@
             switch (input)
             {
                 case "top":
-                    ConsoleIOFacade.PrintScoreboard(this.statistics);
+                    ConsoleIOFacade.CreateScoreboardString(this.statistics);
                     break;
                 case "restart":
                     this.Start();
